@@ -1,8 +1,10 @@
 {
   "name": "react-native-event-day",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A libary show event daily",
-  "main": "src/index.d.ts",
+  "main": "src/index.js",
+  "module": "src/index.es.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "Test"
   },
