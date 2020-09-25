@@ -1,0 +1,25 @@
+{
+  "name": "react-native-event-day",
+  "version": "1.0.0",
+  "description": "A libary show event daily",
+  "main": "index.js",
+  "scripts": {
+    "test": "Test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkduong98/react-native-event-day.git"
+  },
+  "keywords": [
+    "react-native",
+    "react-native-calendar",
+    "react-native-event",
+    "react-native-weekly"
+  ],
+  "author": "Thai Khac Duong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tkduong98/react-native-event-day/issues"
+  },
+  "homepage": "https://github.com/tkduong98/react-native-event-day#readme"
+}
