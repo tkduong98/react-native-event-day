@@ -8,6 +8,7 @@ interface CalendarHeaderProps<T> {
     style: ViewStyle;
     allDayEvents: Event<T>[];
     onPressDateHeader?: (date: Date) => void;
+    onPressEventHeder? : (event: Event<T>) => void;
 }
-export declare const CalendarHeader: React.MemoExoticComponent<({ dateRange, cellHeight, style, allDayEvents, onPressDateHeader, }: CalendarHeaderProps<any>) => JSX.Element>;
+export declare const CalendarHeader: React.MemoExoticComponent<({ dateRange, cellHeight, style, allDayEvents, onPressDateHeader, onPressEventHeder }: CalendarHeaderProps<any>) => JSX.Element>;
 export {};

@@ -5,11 +5,13 @@ export interface BaseEvent {
     start: Date;
     end: Date;
     title: string;
+    backgroundColor : string;
 }
 export interface DayJSConvertedEvent {
     start: dayjs.Dayjs;
     end: dayjs.Dayjs;
     title: string;
+    backgroundColor: string;
     children?: React.ReactNode;
 }
 export declare type Event<T = {}> = BaseEvent & T;

@@ -68,10 +68,10 @@ var commonStyles = reactNative.StyleSheet.create({
         backgroundColor: '#fff',
         zIndex: 1000,
         width: HOUR_GUIDE_WIDTH,
+        height: 130
     },
     eventCell: {
         position: 'absolute',
-        backgroundColor: Color.primary,
         zIndex: 100,
         start: 3,
         end: 3,
@@ -84,6 +84,15 @@ var commonStyles = reactNative.StyleSheet.create({
         shadowRadius: 1,
         elevation: 2,
         minWidth: '33%',
+    },
+    eventCellAllDay: {
+        marginTop: 5,
+        borderRadius: 3,
+        padding: 4,
+        overflow: 'hidden',
+        minWidth: '33%',
+        marginRight: 2,
+        marginLeft: 2
     },
     eventTitle: {
         color: '#fff',
@@ -237,11 +246,12 @@ var CalendarEvent = React.memo(function (_a) {
             getEventCellPositionStyle(event),
             getStyleForOverlappingEvent(eventCount, eventOrder),
             getEventStyle(event),
-        ], onPress: function () { return _onPress(event); }, disabled: !onPressEvent }, event.end.diff(event.start, 'minute') < 32 && showTime ? (React.createElement(reactNative.Text, { style: commonStyles.eventTitle },
+            {backgroundColor : event.backgroundColor}
+        ], onPress: function () { return _onPress(event); }, disabled: !onPressEvent }, event.end.diff(event.start, 'minute') < 32 && showTime ? (React.createElement(reactNative.Text, { style: commonStyles.eventTitle,  numberOfLines : 2},
         event.title,
         ",",
         React.createElement(reactNative.Text, { style: styles.eventTime }, event.start.format('HH:mm')))) : (React.createElement(React.Fragment, null,
-        React.createElement(reactNative.Text, { style: commonStyles.eventTitle }, event.title),
+        React.createElement(reactNative.Text, { style: commonStyles.eventTitle,  numberOfLines : 2 }, event.title),
         showTime && React.createElement(reactNative.Text, { style: styles.eventTime }, formatStartEnd(event)),
         event.children && event.children))));
 });
@@ -320,7 +330,7 @@ var CalendarBody = React.memo(function (_a) {
         ], ref: scrollView, scrollEventThrottle: 32 }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false }),
         React.createElement(reactNative.View, __assign({ style: [styles$1.body] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
             React.createElement(reactNative.View, { style: [commonStyles.hourGuide] }, hours.map(function (hour) { return (React.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour })); })),
-            dateRange.map(function (date) { return (React.createElement(reactNative.View, { style: [{ flex: 1 }], key: date.toString() },
+            dateRange.map(function (date, index) { return (React.createElement(reactNative.View, { style: [{ flex: 1 }], key: index },
                 hours.map(function (hour) { return (React.createElement(HourCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell })); }),
                 dayJsConvertedEvents
                     .filter(function (_a) {
@@ -345,26 +355,33 @@ var styles$1 = reactNative.StyleSheet.create({
 });
 
 var CalendarHeader = React.memo(function (_a) {
-    var dateRange = _a.dateRange, cellHeight = _a.cellHeight, _b = _a.style, style = _b === void 0 ? {} : _b, allDayEvents = _a.allDayEvents, onPressDateHeader = _a.onPressDateHeader;
+    var dateRange = _a.dateRange, cellHeight = _a.cellHeight, _b = _a.style, style = _b === void 0 ? {} : _b, allDayEvents = _a.allDayEvents, onPressDateHeader = _a.onPressDateHeader, onPressEventHeder = _a.onPressEventHeder;
     var _onPress = React.useCallback(function (date) {
         onPressDateHeader && onPressDateHeader(date);
     }, [onPressDateHeader]);
     return (React.createElement(reactNative.View, { style: [styles$2.container, style] },
         React.createElement(reactNative.View, { style: [commonStyles.hourGuide, styles$2.hourGuideSpacer] }),
-        dateRange.map(function (date) {
+        dateRange.map(function (date, index) {
             var _isToday = isToday(date);
-            return (React.createElement(reactNative.TouchableOpacity, { style: { flex: 1, paddingTop: 2 }, onPress: function () { return _onPress(date.toDate()); }, disabled: onPressDateHeader === undefined, key: date.toString() },
+            return (React.createElement(reactNative.TouchableOpacity, {key : index , style: { flex: 1, marginTop: 10 }, onPress: function () { return _onPress(date.toDate()); }, disabled: onPressDateHeader === undefined, key: date.toString() },
                 React.createElement(reactNative.View, { style: { height: cellHeight, justifyContent: 'space-between' } },
                     React.createElement(reactNative.Text, { style: [commonStyles.guideText, _isToday && { color: Color.primary }] }, date.format('ddd')),
                     React.createElement(reactNative.View, { style: _isToday && styles$2.todayWrap },
                         React.createElement(reactNative.Text, { style: [styles$2.dateText, _isToday && { color: '#fff' }] }, date.format('D')))),
-                React.createElement(reactNative.View, { style: [commonStyles.dateCell, { height: cellHeight }] }, allDayEvents.map(function (event) {
+                React.createElement(reactNative.ScrollView, { style: [{ height: cellHeight }], showsVerticalScrollIndicator: false }, allDayEvents.map(function (event, i) {
                     if (!event.start.isSame(date, 'day')) {
                         return null;
                     }
-                    return (React.createElement(reactNative.View, { style: commonStyles.eventCell },
-                        React.createElement(reactNative.Text, { style: commonStyles.eventTitle }, event.title)));
+                    return (
+                        React.createElement(reactNative.TouchableOpacity, { style: [commonStyles.eventCellAllDay, {backgroundColor: event.backgroundColor}],  key: i, onPress: function () { return onPressEventHeder(event)}  },
+                        React.createElement(reactNative.Text, {style: commonStyles.eventTitle, numberOfLines : 1  }, event.title))
+                        
+            
+                    );
+
+                    
                 }))));
+                
         })));
 });
 var styles$2 = reactNative.StyleSheet.create({
@@ -375,14 +392,14 @@ var styles$2 = reactNative.StyleSheet.create({
     },
     dateText: {
         color: '#444',
-        fontSize: 22,
+        fontSize: 14,
         textAlign: 'center',
         marginTop: 6,
     },
     todayWrap: {
         backgroundColor: Color.primary,
-        width: 36,
-        height: 36,
+        width: 30,
+        height: 30,
         borderRadius: 50,
         marginTop: 6,
         paddingBottom: 4,
@@ -397,7 +414,7 @@ var styles$2 = reactNative.StyleSheet.create({
 });
 
 var Calendar = React.memo(function (_a) {
-    var events = _a.events, _b = _a.style, style = _b === void 0 ? {} : _b, height = _a.height, _c = _a.mode, mode = _c === void 0 ? 'week' : _c, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, eventCellStyle = _a.eventCellStyle, date = _a.date, _e = _a.scrollOffsetMinutes, scrollOffsetMinutes = _e === void 0 ? 0 : _e, _f = _a.swipeEnabled, swipeEnabled = _f === void 0 ? true : _f, _g = _a.weekStartsOn, weekStartsOn = _g === void 0 ? 0 : _g, _h = _a.showTime, showTime = _h === void 0 ? true : _h, onPressEvent = _a.onPressEvent, onPressDateHeader = _a.onPressDateHeader, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell;
+    var events = _a.events, _b = _a.style, style = _b === void 0 ? {} : _b, height = _a.height, _c = _a.mode, mode = _c === void 0 ? 'week' : _c, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, eventCellStyle = _a.eventCellStyle, date = _a.date, _e = _a.scrollOffsetMinutes, scrollOffsetMinutes = _e === void 0 ? 0 : _e, _f = _a.swipeEnabled, swipeEnabled = _f === void 0 ? true : _f, _g = _a.weekStartsOn, weekStartsOn = _g === void 0 ? 0 : _g, _h = _a.showTime, showTime = _h === void 0 ? true : _h, onPressEvent = _a.onPressEvent, onPressDateHeader = _a.onPressDateHeader, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell, onPressEventHeder = _a.onPressEventHeder;
     var _j = React.useState(dayjs__default['default'](date)), targetDate = _j[0], setTargetDate = _j[1];
     React.useEffect(function () {
         if (date) {
@@ -444,7 +461,7 @@ var Calendar = React.memo(function (_a) {
         style: style,
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(CalendarHeader, __assign({}, commonProps, { allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader })),
+        React.createElement(CalendarHeader, __assign({}, commonProps, { allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader, onPressEventHeder : onPressEventHeder })),
         React.createElement(CalendarBody, __assign({}, commonProps, { dayJsConvertedEvents: daytimeEvents, containerHeight: height, onPressEvent: onPressEvent, onPressCell: onPressCell, eventCellStyle: eventCellStyle, scrollOffsetMinutes: scrollOffsetMinutes, showTime: showTime, onSwipeHorizontal: onSwipeHorizontal }))));
 });
 
