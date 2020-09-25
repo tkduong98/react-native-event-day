@@ -1,5 +1,5 @@
 {
-  "name": "react-native-event-day",
+  "name": "react-native-event-week",
   "version": "1.0.1",
   "description": "A libary show event daily",
   "main": "src/index.js",
