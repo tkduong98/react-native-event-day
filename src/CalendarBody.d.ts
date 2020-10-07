@@ -13,7 +13,9 @@ interface CalendarBodyProps<T> {
     eventCellStyle?: EventCellStyle<T>;
     scrollOffsetMinutes: number;
     showTime: boolean;
+    refreshing : boolean;
     onSwipeHorizontal?: (d: HorizontalDirection) => void;
+    onRefresh? : () => void;
 }
-export declare const CalendarBody: React.MemoExoticComponent<({ containerHeight, cellHeight, dateRange, style, onPressCell, dayJsConvertedEvents, onPressEvent, eventCellStyle, showTime, scrollOffsetMinutes, onSwipeHorizontal, }: CalendarBodyProps<any>) => JSX.Element>;
+export declare const CalendarBody: React.MemoExoticComponent<({ containerHeight, cellHeight, dateRange, style, refreshing, onPressCell, dayJsConvertedEvents, onPressEvent, eventCellStyle, showTime, scrollOffsetMinutes, onSwipeHorizontal, onRefresh}: CalendarBodyProps<any>) => JSX.Element>;
 export {};

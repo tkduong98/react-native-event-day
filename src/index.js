@@ -280,8 +280,9 @@ function HourCell(_a) {
         React.createElement(reactNative.View, { style: [commonStyles.dateCell, { height: cellHeight }] })));
 }
 var CalendarBody = React.memo(function (_a) {
-    var containerHeight = _a.containerHeight, cellHeight = _a.cellHeight, dateRange = _a.dateRange, _b = _a.style, style = _b === void 0 ? {} : _b, onPressCell = _a.onPressCell, dayJsConvertedEvents = _a.dayJsConvertedEvents, onPressEvent = _a.onPressEvent, eventCellStyle = _a.eventCellStyle, showTime = _a.showTime, scrollOffsetMinutes = _a.scrollOffsetMinutes, onSwipeHorizontal = _a.onSwipeHorizontal;
+    var refresh = _a.refreshing, onRefresh = _a.onRefresh, containerHeight = _a.containerHeight, cellHeight = _a.cellHeight, dateRange = _a.dateRange, _b = _a.style, style = _b === void 0 ? {} : _b, onPressCell = _a.onPressCell, dayJsConvertedEvents = _a.dayJsConvertedEvents, onPressEvent = _a.onPressEvent, eventCellStyle = _a.eventCellStyle, showTime = _a.showTime, scrollOffsetMinutes = _a.scrollOffsetMinutes, onSwipeHorizontal = _a.onSwipeHorizontal;
     var scrollView = React.useRef(null);
+    var [refreshing, setRefreshing] = React.useState(false);
     var _c = React.useState(dayjs__default['default']()), now = _c[0], setNow = _c[1];
     var _d = React.useState(false), panHandled = _d[0], setPanHandled = _d[1];
     React.useEffect(function () {
@@ -298,6 +299,14 @@ var CalendarBody = React.memo(function (_a) {
         var pid = setInterval(function () { return setNow(dayjs__default['default']()); }, 2 * 60 * 1000);
         return function () { return clearInterval(pid); };
     }, []);
+
+    const refreshData = () => {
+        setRefreshing(true);
+        onRefresh();
+        if (refresh) {
+            setRefreshing(false);
+        }
+    }
     var panResponder = React.useMemo(function () {
         return reactNative.PanResponder.create({
             onMoveShouldSetPanResponder: function (_, _a) {
@@ -335,7 +344,9 @@ var CalendarBody = React.memo(function (_a) {
             },
             style,
         ], ref: scrollView, scrollEventThrottle: 32
-    }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false }),
+    }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false },
+        { refreshControl: React.createElement(reactNative.RefreshControl, { refreshing: refreshing, onRefresh: function () { return refreshData() } }) }
+    ),
         React.createElement(reactNative.View, __assign({ style: [styles$1.body] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
             React.createElement(reactNative.View, { style: [commonStyles.hourGuide] }, hours.map(function (hour) { return (React.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour })); })),
             dateRange.map(function (date, index) {
@@ -365,32 +376,68 @@ var styles$1 = reactNative.StyleSheet.create({
 });
 
 var CalendarHeader = React.memo(function (_a) {
-    var dateRange = _a.dateRange, cellHeight = _a.cellHeight, _b = _a.style, style = _b === void 0 ? {} : _b, allDayEvents = _a.allDayEvents, onPressDateHeader = _a.onPressDateHeader, onPressEventHeder = _a.onPressEventHeder;
+    var dateRange = _a.dateRange, cellHeight = _a.cellHeight, _b = _a.style, style = _b === void 0 ? {} : _b, allDayEvents = _a.allDayEvents, onPressDateHeader = _a.onPressDateHeader, onPressEventHeder = _a.onPressEventHeder, onSwipeHorizontal = _a.onSwipeHorizontal, scrollOffsetMinutes = _a.scrollOffsetMinutes;
     var _onPress = React.useCallback(function (date) {
         onPressDateHeader && onPressDateHeader(date);
     }, [onPressDateHeader]);
-    return (React.createElement(reactNative.View, { style: [styles$2.container, style] },
-        React.createElement(reactNative.View, { style: [commonStyles.hourGuide, styles$2.hourGuideSpacer] }),
-        dateRange.map(function (date, index) {
-            var _isToday = isToday(date);
-            return (React.createElement(reactNative.TouchableOpacity, { key: index, style: { flex: 1, marginTop: 10 }, onPress: function () { return _onPress(date.toDate()); }, disabled: onPressDateHeader === undefined, key: date.toString() },
-                React.createElement(reactNative.View, { style: { height: cellHeight, justifyContent: 'space-between' } },
-                    React.createElement(reactNative.Text, { style: [commonStyles.guideText, _isToday && { color: Color.primary }] }, date.format('ddd')),
-                    React.createElement(reactNative.View, { style: _isToday && styles$2.todayWrap },
-                        React.createElement(reactNative.Text, { style: [styles$2.dateText, _isToday && { color: '#fff' }] }, date.format('D')))),
-                React.createElement(reactNative.ScrollView, { style: [{ height: cellHeight }], showsVerticalScrollIndicator: false }, allDayEvents.map(function (event, i) {
-                    if (!event.start.isSame(date, 'day')) {
-                        return null;
-                    }
-                    return (
-                        React.createElement(reactNative.TouchableOpacity, { style: [commonStyles.eventCellAllDay, { backgroundColor: event.backgroundColor }], key: i, onPress: function () { return onPressEventHeder(event) } },
-                            React.createElement(reactNative.Text, { style: commonStyles.eventTitle, numberOfLines: 1 }, event.title))
-                    );
+    var scrollView = React.useRef(null);
+    var _c = React.useState(dayjs__default['default']()), now = _c[0], setNow = _c[1];
+    var _d = React.useState(false), panHandled = _d[0], setPanHandled = _d[1];
 
-
-                }))));
-
-        })));
+    var panResponder = React.useMemo(function () {
+        return reactNative.PanResponder.create({
+            onMoveShouldSetPanResponder: function (_, _a) {
+                var dx = _a.dx, dy = _a.dy;
+                return dx > 2 || dx < -2 || dy > 2 || dy < -2;
+            },
+            onPanResponderMove: function (_, _a) {
+                var dy = _a.dy, dx = _a.dx;
+                if (dx < -1) {
+                    onSwipeHorizontal('LEFT');
+                    setPanHandled(true);
+                    return;
+                }
+                if (dx > 1) {
+                    onSwipeHorizontal('RIGHT');
+                    setPanHandled(true);
+                    return;
+                }
+            },
+            onPanResponderEnd: function () {
+                setPanHandled(false);
+            },
+        });
+    }, [panHandled, onSwipeHorizontal]);
+    return (React.createElement(reactNative.View,
+        __assign({ style: [styles$2.container, style] }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}))
+        ,
+        React.createElement(reactNative.ScrollView, __assign({
+            style: [{ paddingLeft: HOUR_GUIDE_WIDTH }], ref: scrollView,
+        }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, horizontal: true }),
+            dateRange.map(function (date, index) {
+                var _isToday = isToday(date);
+                return (React.createElement(reactNative.View, {
+                    style: [commonStyles.hourGuide, styles$2.hourGuideSpacer, { flex: 1, marginTop: 10, marginLeft: 1.3 }], key: date.toString(),
+                },
+                    React.createElement(reactNative.TouchableOpacity,
+                        {
+                            style: { height: cellHeight, justifyContent: 'space-between' },
+                            onPress: function () { return _onPress(date.toDate()) },
+                            disabled: onPressDateHeader === undefined
+                        },
+                        React.createElement(reactNative.Text, { style: [commonStyles.guideText, _isToday && { color: Color.primary }] }, date.format('ddd')),
+                        React.createElement(reactNative.View, { style: _isToday && styles$2.todayWrap },
+                            React.createElement(reactNative.Text, { style: [styles$2.dateText, _isToday && { color: '#fff' }] }, date.format('D')))),
+                    React.createElement(reactNative.ScrollView, { style: [{ height: cellHeight }], showsVerticalScrollIndicator: false }, allDayEvents.map(function (event, i) {
+                        if (!event.start.isSame(date, 'day')) {
+                            return null;
+                        }
+                        return (
+                            React.createElement(reactNative.TouchableOpacity, { style: [commonStyles.eventCellAllDay, { backgroundColor: event.backgroundColor }], key: i, onPress: function () { return onPressEventHeder(event) } },
+                                React.createElement(reactNative.Text, { style: commonStyles.eventTitle, numberOfLines: 1 }, event.title))
+                        );
+                    }))));
+            }))));
 });
 var styles$2 = reactNative.StyleSheet.create({
     container: {
@@ -422,7 +469,7 @@ var styles$2 = reactNative.StyleSheet.create({
 });
 
 var Calendar = React.memo(function (_a) {
-    var events = _a.events, _b = _a.style, style = _b === void 0 ? {} : _b, height = _a.height, _c = _a.mode, mode = _c === void 0 ? 'week' : _c, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, eventCellStyle = _a.eventCellStyle, date = _a.date, _e = _a.scrollOffsetMinutes, scrollOffsetMinutes = _e === void 0 ? 0 : _e, _f = _a.swipeEnabled, swipeEnabled = _f === void 0 ? true : _f, _g = _a.weekStartsOn, weekStartsOn = _g === void 0 ? 0 : _g, _h = _a.showTime, showTime = _h === void 0 ? true : _h, onPressEvent = _a.onPressEvent, onPressDateHeader = _a.onPressDateHeader, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell, onPressEventHeder = _a.onPressEventHeder;
+    var events = _a.events, _b = _a.style, style = _b === void 0 ? {} : _b, height = _a.height, _c = _a.mode, mode = _c === void 0 ? 'week' : _c, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, refreshing = _a.refreshing, onRefresh = _a.onRefresh, eventCellStyle = _a.eventCellStyle, date = _a.date, _e = _a.scrollOffsetMinutes, scrollOffsetMinutes = _e === void 0 ? 0 : _e, _f = _a.swipeEnabled, swipeEnabled = _f === void 0 ? true : _f, _g = _a.weekStartsOn, weekStartsOn = _g === void 0 ? 0 : _g, _h = _a.showTime, showTime = _h === void 0 ? true : _h, onPressEvent = _a.onPressEvent, onPressDateHeader = _a.onPressDateHeader, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell, onPressEventHeder = _a.onPressEventHeder;
     var _j = React.useState(dayjs__default['default'](date)), targetDate = _j[0], setTargetDate = _j[1];
     React.useEffect(function () {
         if (date) {
@@ -469,8 +516,11 @@ var Calendar = React.memo(function (_a) {
         style: style,
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(CalendarHeader, __assign({}, commonProps, { allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader, onPressEventHeder: onPressEventHeder })),
-        React.createElement(CalendarBody, __assign({}, commonProps, { dayJsConvertedEvents: daytimeEvents, containerHeight: height, onPressEvent: onPressEvent, onPressCell: onPressCell, eventCellStyle: eventCellStyle, scrollOffsetMinutes: scrollOffsetMinutes, showTime: showTime, onSwipeHorizontal: onSwipeHorizontal }))));
+        React.createElement(CalendarHeader, __assign({}, commonProps, { allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader, onPressEventHeder: onPressEventHeder, onSwipeHorizontal: onSwipeHorizontal, scrollOffsetMinutes: scrollOffsetMinutes })),
+        React.createElement(CalendarBody, __assign({}, commonProps, { refreshing: refreshing, dayJsConvertedEvents: daytimeEvents, containerHeight: height, onPressEvent: onPressEvent, onPressCell: onPressCell, eventCellStyle: eventCellStyle, scrollOffsetMinutes: scrollOffsetMinutes, showTime: showTime, onSwipeHorizontal: onSwipeHorizontal, onRefresh: onRefresh }))));
+
+
+
 });
 
 exports.Calendar = Calendar;

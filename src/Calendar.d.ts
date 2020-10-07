@@ -11,6 +11,7 @@ interface CalendarProps<T = {}> {
     date?: Date;
     swipeEnabled?: boolean;
     showTime?: boolean;
+    refreshing : boolean;
     weekStartsOn?: WeekNum;
     locale?: string;
     onChangeDate?: DateRangeHandler;
@@ -18,6 +19,7 @@ interface CalendarProps<T = {}> {
     onPressDateHeader?: (date: Date) => void;
     onPressEventHeder? : (event: Event<T>) => void;
     onPressCell?: (date: Date) => void;
+    onRefresh? : () => void;
 }
-export declare const Calendar: React.MemoExoticComponent<({ events, style, height, mode, locale, eventCellStyle, date, scrollOffsetMinutes, swipeEnabled, weekStartsOn, showTime, onPressEvent, onPressDateHeader, onChangeDate, onPressCell, onPressEventHeder }: CalendarProps) => JSX.Element>;
+export declare const Calendar: React.MemoExoticComponent<({ events, style, height, mode, locale, eventCellStyle, date, scrollOffsetMinutes, swipeEnabled, weekStartsOn, showTime, refreshing, onPressEvent, onPressDateHeader, onChangeDate, onPressCell, onPressEventHeder, onRefresh }: CalendarProps) => JSX.Element>;
 export {};
