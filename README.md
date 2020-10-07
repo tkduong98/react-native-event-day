@@ -4,8 +4,6 @@
 
 Cross-platform gcal/outlook like calendar component for React Native.
 
-[Components Demo](https://react-native-big-calendar.netlify.com/?path=/story/desktop--3days-mode)
-
 <img src="./assets/screenshot-mobile.png" height="500">
 
 # Features
@@ -18,37 +16,37 @@ Cross-platform gcal/outlook like calendar component for React Native.
 # Install
 
 ```
-npm install --save react-native-big-calendar
+npm install --save react-native-event-week
 ```
 
 Or if you use Yarn:
 
 ```
-yarn add react-native-big-calendar
+yarn add react-native-event-week
 ```
 
 # Getting Started
 
 ```typescript
-import { Calendar } from 'react-native-event-week'
+import { Calendar } from "react-native-event-week";
 
 const events = [
   {
-    title: 'Meeting',
+    title: "Meeting",
     start: new Date(2020, 1, 11, 10, 0),
     end: new Date(2020, 1, 11, 10, 30),
-    backgroundColor : "#41CAC0"
+    backgroundColor: "#41CAC0",
   },
   {
-    title: 'Coffee break',
+    title: "Coffee break",
     start: new Date(2020, 1, 11, 15, 45),
     end: new Date(2020, 1, 11, 16, 30),
-    backgroundColor : "#41CAC0"
+    backgroundColor: "#41CAC0",
   },
-]
+];
 
 function App() {
-  return <Calendar events={events} height={600} />
+  return <Calendar events={events} height={600} />;
 }
 ```
 
@@ -58,20 +56,24 @@ function App() {
 
 ```typescript
 interface CalendarProps<T = {}> {
-  events: Event<T>[]
-  height: number
-  mode?: Mode
-  style?: ViewStyle
-  eventCellStyle?: EventCellStyle<T>
-  scrollOffsetMinutes?: number
-  date?: Date
-  swipeEnabled?: boolean
-  showTime?: boolean
-  weekStartsOn?: WeekNum
-  locale?: string
-  onChangeDate?: ([start, end]: [Date, Date]) => void
-  onPressEvent?: (event: Event<T>) => void
-  onPressDateHeader?: (date: Date) => void
+  events: Event<T>[];
+  height: number;
+  mode?: Mode;
+  style?: ViewStyle;
+  eventCellStyle?: EventCellStyle<T>;
+  scrollOffsetMinutes?: number;
+  date?: Date;
+  swipeEnabled?: boolean;
+  showTime?: boolean;
+  refreshing: boolean;
+  weekStartsOn?: WeekNum;
+  locale?: string;
+  onChangeDate?: DateRangeHandler;
+  onPressEvent?: (event: Event<T>) => void;
+  onPressDateHeader?: (date: Date) => void;
+  onPressEventHeder?: (event: Event<T>) => void;
+  onPressCell?: (date: Date) => void;
+  onRefresh?: () => void;
 }
 ```
 
@@ -96,8 +98,6 @@ interface CalendarProps<T = {}> {
 | `weekStartsOn`        | no       | 0, 1, 2, 3, 4, 5, 6                                                                 | Which day the week starts on. Sunday is `0`.                                                                                                                                                                         |
 | `locale`              | no       | `string`                                                                            | Custom locale. See I18n section                                                                                                                                                                                      |
 
-For more information, see [Storybook](https://github.com/llotheo/react-native-big-calendar/blob/master/stories/index.stories.tsx)
-
 # I18n
 
 Please specity your locale via `locale` prop **and** import day.js locale file:
@@ -117,15 +117,9 @@ https://github.com/iamkun/dayjs/tree/dev/src/locale
 
 # Screenshots
 
-<img src="./assets/screenshot-mobile.png" height="500">
-<img src="./assets/screenshot-simulator.png" height="500">
-<img src="./assets/screenshot-desktop.png" height="500">
-
-# Who's using this?
-
-<a href="https://www.nupp1.io?utm_source=react-native-big-calendar">
-  <img src="https://www.nupp1.io/images/logo-with-text.svg" height="80" />
-</a>
+<img src="./assets/Screenshot_1602067738" height="500">
+<img src="./assets/image_2020_10_07T10_51_34_397Z.png" height="500">
+<!-- <img src="./assets/screenshot-desktop.png" height="500"> -->
 
 If you are using this library, please send a PR to add your organization!
 
