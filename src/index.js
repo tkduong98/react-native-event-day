@@ -6,7 +6,7 @@ var dayjs = require('dayjs');
 var React = require('react');
 var reactNative = require('react-native');
 var isBetween = require('dayjs/plugin/isBetween');
-
+import { Dimensions } from 'react-native';
 function _interopDefaultLegacy(e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var dayjs__default = /*#__PURE__*/_interopDefaultLegacy(dayjs);
@@ -26,6 +26,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+const { width } = Dimensions.get('window');
 
 var __assign = function () {
     __assign = Object.assign || function __assign(t) {
@@ -315,6 +316,7 @@ var CalendarBody = React.memo(function (_a) {
             },
             onPanResponderMove: function (_, _a) {
                 var dy = _a.dy, dx = _a.dx;
+                // console.info(dx, dy)
                 if (dy < -1 * SWIPE_THRESHOLD || SWIPE_THRESHOLD < dy || panHandled) {
                     return;
                 }
@@ -384,6 +386,8 @@ var CalendarHeader = React.memo(function (_a) {
     var _c = React.useState(dayjs__default['default']()), now = _c[0], setNow = _c[1];
     var _d = React.useState(false), panHandled = _d[0], setPanHandled = _d[1];
 
+    console.info(allDayEvents)
+
     var panResponder = React.useMemo(function () {
         return reactNative.PanResponder.create({
             onMoveShouldSetPanResponder: function (_, _a) {
@@ -392,13 +396,17 @@ var CalendarHeader = React.memo(function (_a) {
             },
             onPanResponderMove: function (_, _a) {
                 var dy = _a.dy, dx = _a.dx;
+                console.info(_a)
+                if (1 < dy || panHandled) {
+                    return;
+                }
                 if (dx < -1) {
-                    onSwipeHorizontal('LEFT');
+                    true && onSwipeHorizontal('LEFT');
                     setPanHandled(true);
                     return;
                 }
                 if (dx > 1) {
-                    onSwipeHorizontal('RIGHT');
+                    true && onSwipeHorizontal('RIGHT');
                     setPanHandled(true);
                     return;
                 }
@@ -408,16 +416,14 @@ var CalendarHeader = React.memo(function (_a) {
             },
         });
     }, [panHandled, onSwipeHorizontal]);
-    return (React.createElement(reactNative.View,
-        __assign({ style: [styles$2.container, style] }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}))
-        ,
+    return (React.createElement(reactNative.View, { style: [styles$2.container, style] },
         React.createElement(reactNative.ScrollView, __assign({
-            style: [{ paddingLeft: HOUR_GUIDE_WIDTH }], ref: scrollView,
-        }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, horizontal: true }),
+            style: [{ paddingLeft: width / 8, }],
+        }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsHorizontalScrollIndicator: false, horizontal: true }),
             dateRange.map(function (date, index) {
                 var _isToday = isToday(date);
                 return (React.createElement(reactNative.View, {
-                    style: [commonStyles.hourGuide, styles$2.hourGuideSpacer, { flex: 1, marginTop: 10, marginLeft: 1.3 }], key: date.toString(),
+                    style: [commonStyles.hourGuide, styles$2.hourGuideSpacer, { flex: 1, marginTop: 10, width: width / 8 }], key: date.toString(),
                 },
                     React.createElement(reactNative.TouchableOpacity,
                         {
@@ -428,22 +434,23 @@ var CalendarHeader = React.memo(function (_a) {
                         React.createElement(reactNative.Text, { style: [commonStyles.guideText, _isToday && { color: Color.primary }] }, date.format('ddd')),
                         React.createElement(reactNative.View, { style: _isToday && styles$2.todayWrap },
                             React.createElement(reactNative.Text, { style: [styles$2.dateText, _isToday && { color: '#fff' }] }, date.format('D')))),
-                    React.createElement(reactNative.ScrollView, { style: [{ height: cellHeight }], showsVerticalScrollIndicator: false }, allDayEvents.map(function (event, i) {
-                        if (!event.start.isSame(date, 'day')) {
-                            return null;
-                        }
-                        return (
-                            React.createElement(reactNative.TouchableOpacity, { style: [commonStyles.eventCellAllDay, { backgroundColor: event.backgroundColor }], key: i, onPress: function () { return onPressEventHeder(event) } },
-                                React.createElement(reactNative.Text, { style: commonStyles.eventTitle, numberOfLines: 1 }, event.title))
-                        );
-                    }))));
+                    React.createElement(reactNative.ScrollView, { style: [{ height: cellHeight }], showsVerticalScrollIndicator: false },
+                        allDayEvents.map(function (event, i) {
+                            if (!event.start.isSame(date, 'day')) {
+                                return null;
+                            }
+                            return (
+                                React.createElement(reactNative.TouchableOpacity, { style: [commonStyles.eventCellAllDay, { backgroundColor: event.backgroundColor }], key: i, onPress: function () { return onPressEventHeder(event) } },
+                                    React.createElement(reactNative.Text, { style: commonStyles.eventTitle, numberOfLines: 1 }, event.title))
+                            );
+                        }))));
             }))));
 });
 var styles$2 = reactNative.StyleSheet.create({
     container: {
-        flexDirection: 'row',
-        borderBottomColor: '#eee',
-        borderBottomWidth: 1,
+        // flexDirection: 'row',
+        // borderBottomColor: '#eee',
+        // borderBottomWidth: 1,
     },
     dateText: {
         color: '#444',

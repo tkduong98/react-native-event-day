@@ -117,7 +117,7 @@ https://github.com/iamkun/dayjs/tree/dev/src/locale
 
 # Screenshots
 
-<img src="./assets/Screenshot_1602067738" height="500">
+<img src="./assets/Screenshot_1602067738.png" height="500">
 <img src="./assets/image_2020_10_07T10_51_34_397Z.png" height="500">
 <!-- <img src="./assets/screenshot-desktop.png" height="500"> -->
 
