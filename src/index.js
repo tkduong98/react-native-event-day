@@ -316,7 +316,6 @@ var CalendarBody = React.memo(function (_a) {
             },
             onPanResponderMove: function (_, _a) {
                 var dy = _a.dy, dx = _a.dx;
-                // console.info(dx, dy)
                 if (dy < -1 * SWIPE_THRESHOLD || SWIPE_THRESHOLD < dy || panHandled) {
                     return;
                 }
@@ -386,18 +385,18 @@ var CalendarHeader = React.memo(function (_a) {
     var _c = React.useState(dayjs__default['default']()), now = _c[0], setNow = _c[1];
     var _d = React.useState(false), panHandled = _d[0], setPanHandled = _d[1];
 
-    console.info(allDayEvents)
 
     var panResponder = React.useMemo(function () {
         return reactNative.PanResponder.create({
             onMoveShouldSetPanResponder: function (_, _a) {
                 var dx = _a.dx, dy = _a.dy;
-                return dx > 2 || dx < -2 || dy > 2 || dy < -2;
+                console.info(dx, dy)
+                return true;
             },
             onPanResponderMove: function (_, _a) {
                 var dy = _a.dy, dx = _a.dx;
-                console.info(_a)
-                if (1 < dy || panHandled) {
+                console.info(dx, dy)
+                if (dy < -1 || panHandled) {
                     return;
                 }
                 if (dx < -1) {
