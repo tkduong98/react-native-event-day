@@ -389,14 +389,11 @@ var CalendarHeader = React.memo(function (_a) {
     var panResponder = React.useMemo(function () {
         return reactNative.PanResponder.create({
             onMoveShouldSetPanResponder: function (_, _a) {
-                var dx = _a.dx, dy = _a.dy;
-                console.info(dx, dy)
                 return true;
             },
             onPanResponderMove: function (_, _a) {
                 var dy = _a.dy, dx = _a.dx;
-                console.info(dx, dy)
-                if (dy < -1 || panHandled) {
+                if (panHandled) {
                     return;
                 }
                 if (dx < -1) {

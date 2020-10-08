@@ -32,15 +32,15 @@ import { Calendar } from "react-native-event-week";
 
 const events = [
   {
-    title: "Meeting",
-    start: new Date(2020, 1, 11, 10, 0),
-    end: new Date(2020, 1, 11, 10, 30),
+    title: "Important meeting",
+    start: "2020-10-06 14:45",
+    end: "2020-10-06 18:15",
     backgroundColor: "#41CAC0",
   },
   {
     title: "Coffee break",
-    start: new Date(2020, 1, 11, 15, 45),
-    end: new Date(2020, 1, 11, 16, 30),
+    start: "2020-10-06 06:45",
+    end: "2020-10-06 07:15",
     backgroundColor: "#41CAC0",
   },
 ];
