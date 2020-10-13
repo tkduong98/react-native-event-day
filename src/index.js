@@ -26,7 +26,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 var __assign = function () {
     __assign = Object.assign || function __assign(t) {
@@ -381,11 +381,10 @@ var CalendarHeader = React.memo(function (_a) {
     var _onPress = React.useCallback(function (date) {
         onPressDateHeader && onPressDateHeader(date);
     }, [onPressDateHeader]);
-    var scrollView = React.useRef(null);
     var _c = React.useState(dayjs__default['default']()), now = _c[0], setNow = _c[1];
     var _d = React.useState(false), panHandled = _d[0], setPanHandled = _d[1];
-
-
+    var [width_current, setWidthCurrent] = React.useState(width);
+    var [isPortrait, setIPortrait] = React.useState(width > height ? false : true)
     var panResponder = React.useMemo(function () {
         return reactNative.PanResponder.create({
             onMoveShouldSetPanResponder: function (_, _a) {
@@ -412,14 +411,21 @@ var CalendarHeader = React.memo(function (_a) {
             },
         });
     }, [panHandled, onSwipeHorizontal]);
-    return (React.createElement(reactNative.View, { style: [styles$2.container, style] },
+    return (React.createElement(reactNative.View, {
+        style: [styles$2.container, style], onLayout: (e) => {
+            if (width_current.toFixed(0) !== e.nativeEvent.layout.width.toFixed(0)) {
+                setIPortrait(!isPortrait)
+            }
+            setWidthCurrent(e.nativeEvent.layout.width)
+        }
+    },
         React.createElement(reactNative.ScrollView, __assign({
-            style: [{ paddingLeft: width / 8, }],
+            style: [{ paddingLeft: isPortrait ? (width_current / 8) : 50 }],
         }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsHorizontalScrollIndicator: false, horizontal: true }),
             dateRange.map(function (date, index) {
                 var _isToday = isToday(date);
                 return (React.createElement(reactNative.View, {
-                    style: [commonStyles.hourGuide, styles$2.hourGuideSpacer, { flex: 1, marginTop: 10, width: width / 8 }], key: date.toString(),
+                    style: [commonStyles.hourGuide, styles$2.hourGuideSpacer, { flex: 1, marginTop: 10, width: isPortrait ? (width_current) / 8 : ((width_current + 50) / 8) }], key: date.toString(),
                 },
                     React.createElement(reactNative.TouchableOpacity,
                         {
